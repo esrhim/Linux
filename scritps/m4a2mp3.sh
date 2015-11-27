@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# # Auckland / 28/11/2015
+# Auckland / 28/11/2015
 #
 # Pablo Magro
 #
@@ -23,7 +23,7 @@
 #
 # -0
 # Input items are terminated by a null character instead of by whitespace, and the quotes and backslash are not special 
-#(every character is taken literally). Disables the end of file string, which is treated like any other argument. Useful 
+# (every character is taken literally). Disables the end of file string, which is treated like any other argument. Useful 
 # when input items might contain white space, quote marks, or backslashes. 
 # The GNU find -print0 option produces input suitable for this mode.
 #
@@ -50,7 +50,6 @@ WORK_PATH="."
 NUM_ARGUMENTS=$#
 AB=256
 REMOVE=false
-
 pkg=ffmpeg
 
 # Check if the ffmpeg program is installed.
