@@ -118,7 +118,7 @@ if [ $NUM_ARGUMENTS -gt 2 ]; then
 	WORK_PATH=$2;
 
 	# Move files.
-	find "$1" -type f -name "*.$M4A" -print0 | xargs -0 -I "file" mv -v "file" "$2"
+	find "$1" -type f -name "*.$M4A" -print0 | xargs -0 -I "file" mv -v "file" "$2";
 
 elif [ $NUM_ARGUMENTS -eq 1 ]; then
 	checkFolder $1
@@ -142,8 +142,9 @@ else
 	
 	for file in *.m4a
 	do
-		ffmpeg -i "$file" -ab "$AB"k "${file%m4a}mp3"
-		[ $REMOVE ] && rm $file
+		ffmpeg -i "$file" -ab "$AB"k "${file%m4a}mp3";
+
+		[ $REMOVE ] && rm "$file";
 	done
 fi
 
