@@ -1,9 +1,13 @@
 #!/bin/bash
 #
+# Pablo Magro
+# Auckland / 28/11/2015
+#
 # ######################################################
 #
 # Script to convert .m4a to .mp3
-# name of this script: m4a2mp3.sh # m4a to mp3
+#
+# Use: ./m4a2mp3.sh <source-folder> <target-folder> <ab 256>
 #
 # Dependencies:
 # sudo apt-get install ffmpeg libavcodec-extra-53
@@ -39,6 +43,22 @@
 M4A=m4a
 NUMVAR=$#
 AB=256
+pkg=ffmpeg
+
+# Check if ffmpeg is installed.
+
+dpkg -s "$pkg" >/dev/null 2>&1 && {
+	echo "$pkg is installed."
+    
+} || {
+    echo "$pkg is not installed, do you wish to install it?"
+	select yn in "Yes" "No"; do
+	    case $yn in
+	        Yes) sudo -s apt-get install $pkg; break;;
+	        No ) exit 0;;
+	    esac
+	done    
+}
 
 # Search for the ab parameter.
 if [ $NUMVAR -gt 1 ]; then
