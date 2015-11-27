@@ -1,13 +1,18 @@
 #!/bin/bash
 #
+# # Auckland / 28/11/2015
+#
 # Pablo Magro
-# Auckland / 28/11/2015
 #
 # ######################################################
 #
 # Script to convert .m4a to .mp3
 #
-# Use: ./m4a2mp3.sh <source-folder> <target-folder> <ab 256>
+# Use: ./m4a2mp3.sh <source-folder> <target-folder> <-ab=320> <-rm=y/n>
+#
+#      ./scritps/m4a2mp3.sh ~/Downloads/jd/ ~/mp3-converted/ -ab=320 -rm=y
+#
+# Debug: add "-x" after bash in the 1st program line (without quotes).
 #
 # Dependencies:
 # sudo apt-get install ffmpeg libavcodec-extra-53
@@ -41,45 +46,58 @@
 # #######################################################
 
 M4A=m4a
-NUMVAR=$#
+WORK_PATH="."
+NUM_ARGUMENTS=$#
 AB=256
+REMOVE=false
+
 pkg=ffmpeg
 
-# Check if ffmpeg is installed.
+# Check if the ffmpeg program is installed.
 
 dpkg -s "$pkg" >/dev/null 2>&1 && {
-	echo "$pkg is installed."
-    
+	echo "[*] $pkg is installed."    
 } || {
     echo "$pkg is not installed, do you wish to install it?"
 	select yn in "Yes" "No"; do
 	    case $yn in
-	        Yes) sudo -s apt-get install $pkg; break;;
+	        Yes) sudo -s apt-get install -y $pkg; break;;
 	        No ) exit 0;;
 	    esac
 	done    
 }
 
-# Search for the ab parameter.
-if [ $NUMVAR -gt 1 ]; then
-	# To change...
-	var=$(echo $@ | awk -F" " '{print $1,$2,$3,$4}')
-	set -- $var
+# READ customized parameters.
 
-	if [[ "$1" =~ "ab" ]]; then
-		AB=$2
-	elif [[ "$2" =~ "ab" ]]; then
-		AB=$3
-	elif [[ "$3" =~ "ab" ]]; then
-		AB=$4
-	fi
+if [ $NUM_ARGUMENTS -gt 1 ]; then
+	arr=($@);
+
+	for i in ${arr[@]}; do
+		# Bit rate
+		if [[ "$i" =~ "-ab" ]]; then			
+			IFS='=' read -a argumentArray <<< "$i"
+			if [[ -n ${argumentArray[1]} ]]; then
+				AB=${argumentArray[1]}
+			fi
+		# Remove original m4a files.
+		elif [[ "$i" =~ "-rm" ]]; then
+			IFS='=' read -a argumentArray <<< "$i"
+			if [[ -n ${argumentArray[1]} ]]; then
+				rm=${argumentArray[1]}
+
+				if [[ "$rm" == "y" || "$rm" == "yes" ]]; then
+					REMOVE=true
+				fi
+			fi
+		fi
+	done
 fi
 
 # Check if $1 is a folder. 
 # Return 0 true and 1 otherwise.
 checkFolder () {
 	if [ ! -e "$1" ]; then
-		echo "Directory $1 doesn't exist!!!";
+		echo "Directory $1 doesn't exist !!!";
 		return 1;
 	fi
 
@@ -88,37 +106,44 @@ checkFolder () {
 
 # 1st move files from $1 to $2.
 
-if [ $NUMVAR -eq 2 ]; then
+if [ $NUM_ARGUMENTS -gt 2 ]; then
 	checkFolder $1
 	[ "$?" -eq 1 ] && exit 1;
 
 	if [ ! -e "$2" ]; then
-		# echo "Create folder $2";
+		echo "Creating folder $2";
 		mkdir -p $2;
 	fi
+
+	WORK_PATH=$2;
 
 	# Move files.
 	find "$1" -type f -name "*.$M4A" -print0 | xargs -0 -I "file" mv -v "file" "$2"
 
-	# Move to the target directory to complete the convertion.
-	cd $2
-
-elif [ $NUMVAR -eq 1 ]; then
+elif [ $NUM_ARGUMENTS -eq 1 ]; then
 	checkFolder $1
+
 	[ "$?" -eq 1 ] && exit 1;
-	cd $1
+
+	WORK_PATH=$1;
 fi
 
-NUM_ELEMENTS=$(find . -name *.m4a | wc -l);
+NUM_FIND_ELEMS=$(find $WORK_PATH -name *.m4a | wc -l);
 
-if [ $NUM_ELEMENTS -eq 0 ]; then
-	echo "Nothing to do."
-else
-	echo -e "Converting files..."
+echo "[*] Working path: $WORK_PATH"
+echo "[*] Elements to convert: $NUM_FIND_ELEMS"
+
+if [ $NUM_FIND_ELEMS -eq 0 ]; then
+	echo "Nothing to do, no matches found."
+else	
+	cd $WORK_PATH
+
+	echo -e "[*] Converting files..."
 	
 	for file in *.m4a
 	do
-		ffmpeg -i "$file" -ab "$AB"k "${file%m4a}mp3" && rm "$file"
+		ffmpeg -i "$file" -ab "$AB"k "${file%m4a}mp3"
+		[ $REMOVE ] && rm $file
 	done
 fi
 
