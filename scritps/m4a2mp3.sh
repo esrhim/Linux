@@ -1,12 +1,13 @@
 #!/bin/bash
 #
-# Auckland / 28/11/2015
-#
-# Pablo Magro
+# Pablo Magro / Auckland / 28/11/2015.
 #
 # ######################################################
 #
 # Script to convert .m4a to .mp3
+#
+# 1. If one parameters is set, it means the target folder.
+# 2. if two parameters are set, it means source and target folders.
 #
 # Use: ./m4a2mp3.sh <source-folder> <target-folder> <-ab=320> <-rm=y/n>
 #
