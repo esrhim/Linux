@@ -1,9 +1,10 @@
 #!/bin/bash
 #
-# Pablo Magro / Auckland / 28/11/2015.
-#
 # ######################################################
-#
+# Version: 1.0
+# ######################################################
+# Pablo Magro / Auckland / 28/11/2015.
+# ######################################################
 # Script to convert .m4a to .mp3
 #
 # 1. If one parameters is set, it means the target folder.
@@ -14,12 +15,10 @@
 #      ./scritps/m4a2mp3.sh ~/Downloads/jd/ ~/mp3-converted/ -ab=320 -rm=y
 #
 # Debug: add "-x" after bash in the 1st program line (without quotes).
-#
+# #######################################################
 # Dependencies:
 # sudo apt-get install ffmpeg libavcodec-extra-53
-#
 # #######################################################
-#
 # man xargs
 #
 # -0
@@ -31,9 +30,7 @@
 # -I replace-str
 # Replace occurrences of replace-str in the initial-arguments with names read from standard input. Also, unquoted blanks 
 # do not terminate input items; instead the separator is the newline character. Implies -x and -L 1.
-#
 # #######################################################
-#
 # man ffmpeg
 # 
 # -ab
@@ -43,7 +40,6 @@
 # 
 # Available options are: 
 # 8, 16, 24, 32, 40, 48, 64, 80, 96, 112, 128, 160, 192, 224, 256, or 320 (add a k after each to get that rate)
-#
 # #######################################################
 
 M4A=m4a
@@ -68,6 +64,7 @@ dpkg -s "$pkg" >/dev/null 2>&1 && {
 }
 
 # READ customized parameters.
+# TODO: Add -search-folder and -convertion-folder as parameters and make it totally general.
 
 if [ $NUM_ARGUMENTS -gt 1 ]; then
 	# Also you can use a while + case "$1" in something) shift, and always use $1.
@@ -75,8 +72,14 @@ if [ $NUM_ARGUMENTS -gt 1 ]; then
 	arr=($@);
 
 	for i in ${arr[@]}; do
+		# Search directory.
+		elif [[ "$i" =~ "-search-folder" ]]; then
+		
+		# Convertion directory.
+		elif [[ "$i" =~ "-convertion-folder" ]]; then
+		
 		# Bit rate
-		if [[ "$i" =~ "-ab" ]]; then			
+		elif [[ "$i" =~ "-ab" ]]; then
 			IFS='=' read -a argumentArray <<< "$i"
 			if [[ -n ${argumentArray[1]} ]]; then
 				AB=${argumentArray[1]}
