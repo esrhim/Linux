@@ -70,6 +70,8 @@ dpkg -s "$pkg" >/dev/null 2>&1 && {
 # READ customized parameters.
 
 if [ $NUM_ARGUMENTS -gt 1 ]; then
+	# Also you can use a while + case "$1" in something) shift, and always use $1.
+
 	arr=($@);
 
 	for i in ${arr[@]}; do
