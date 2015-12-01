@@ -1,10 +1,9 @@
 #!/bin/bash
-#
-# ######################################################
+################################################################################################################
 # Version: 1.0
-# ######################################################
+################################################################################################################
 # Pablo Magro / Auckland / 28/11/2015.
-# ######################################################
+################################################################################################################
 # Script to convert .m4a to .mp3
 #
 # 1. If one parameters is set, it means the target folder.
@@ -15,10 +14,10 @@
 #      ./scritps/m4a2mp3.sh ~/Downloads/jd/ ~/mp3-converted/ -ab=320 -rm=y
 #
 # Debug: add "-x" after bash in the 1st program line (without quotes).
-# #######################################################
+################################################################################################################
 # Dependencies:
 # sudo apt-get install ffmpeg libavcodec-extra-53
-# #######################################################
+################################################################################################################
 # man xargs
 #
 # -0
@@ -30,7 +29,7 @@
 # -I replace-str
 # Replace occurrences of replace-str in the initial-arguments with names read from standard input. Also, unquoted blanks 
 # do not terminate input items; instead the separator is the newline character. Implies -x and -L 1.
-# #######################################################
+################################################################################################################
 # man ffmpeg
 # 
 # -ab
@@ -40,7 +39,7 @@
 # 
 # Available options are: 
 # 8, 16, 24, 32, 40, 48, 64, 80, 96, 112, 128, 160, 192, 224, 256, or 320 (add a k after each to get that rate)
-# #######################################################
+################################################################################################################
 
 M4A=m4a
 WORK_PATH="."
@@ -68,12 +67,11 @@ dpkg -s "$pkg" >/dev/null 2>&1 && {
 
 if [ $NUM_ARGUMENTS -gt 1 ]; then
 	# Also you can use a while + case "$1" in something) shift, and always use $1.
-
 	arr=($@);
 
 	for i in ${arr[@]}; do
 		# Search directory.
-		elif [[ "$i" =~ "-search-folder" ]]; then
+		if [[ "$i" =~ "-search-folder" ]]; then
 		
 		# Convertion directory.
 		elif [[ "$i" =~ "-convertion-folder" ]]; then
