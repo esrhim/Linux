@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 ################################################################################################################
 # Version: 1.0
 ################################################################################################################
@@ -9,9 +9,9 @@
 # 1. If one parameters is set, it means the target folder.
 # 2. if two parameters are set, it means source and target folders.
 #
-# Use: ./m4a2mp3.sh <source-folder> <target-folder> <-ab=320> <-rm=y/n>
+# Use: ./m4a2mp3.sh <-search-folder=> <-convertion-folder=> <-ab=320> <-rm=y/n> <-ext=m4a/ogg>
 #
-#      ./scritps/m4a2mp3.sh ~/Downloads/jd/ ~/mp3-converted/ -ab=320 -rm=y
+#      ./scritps/m4a2mp3.sh -search-folder=~/Downloads/ -convertion-folder=~/mp3-converted/ -ab=320 -rm=y
 #
 # Debug: add "-x" after bash in the 1st program line (without quotes).
 ################################################################################################################
@@ -41,8 +41,9 @@
 # 8, 16, 24, 32, 40, 48, 64, 80, 96, 112, 128, 160, 192, 224, 256, or 320 (add a k after each to get that rate)
 ################################################################################################################
 
-M4A=m4a
-WORK_PATH="."
+EXTENSION=
+CONVERTION_PATH="." # By default
+SEARCH_PATH="."     # By default
 NUM_ARGUMENTS=$#
 AB=256
 REMOVE=false
@@ -62,27 +63,38 @@ dpkg -s "$pkg" >/dev/null 2>&1 && {
 	done    
 }
 
-# READ customized parameters.
-# TODO: Add -search-folder and -convertion-folder as parameters and make it totally general.
+# READ command line parameters.
 
-if [ $NUM_ARGUMENTS -gt 1 ]; then
+if [ $NUM_ARGUMENTS -gt 0 ]; then
 	# Also you can use a while + case "$1" in something) shift, and always use $1.
 	arr=($@);
 
 	for i in ${arr[@]}; do
+		if [[ "$i" =~ "-ext" ]]; then
+			IFS='=' read -a argumentArray <<< "$i"
+			EXTENSION=${argumentArray[1]}
+
 		# Search directory.
-		if [[ "$i" =~ "-search-folder" ]]; then
-		
+		elif [[ "$i" =~ "-search-folder" ]]; then
+			IFS='=' read -a argumentArray <<< "$i"
+			if [[ -n ${argumentArray[1]} ]]; then
+				SEARCH_PATH=${argumentArray[1]}
+				SEARCH_PATH="${SEARCH_PATH/\~/$HOME}"
+			fi
 		# Convertion directory.
 		elif [[ "$i" =~ "-convertion-folder" ]]; then
-		
+			IFS='=' read -a argumentArray <<< "$i"
+			if [[ -n ${argumentArray[1]} ]]; then
+				CONVERTION_PATH=${argumentArray[1]}
+				CONVERTION_PATH="${CONVERTION_PATH/\~/$HOME}"
+			fi
 		# Bit rate
 		elif [[ "$i" =~ "-ab" ]]; then
 			IFS='=' read -a argumentArray <<< "$i"
 			if [[ -n ${argumentArray[1]} ]]; then
 				AB=${argumentArray[1]}
 			fi
-		# Remove original m4a files.
+		# Remove the original files.
 		elif [[ "$i" =~ "-rm" ]]; then
 			IFS='=' read -a argumentArray <<< "$i"
 			if [[ -n ${argumentArray[1]} ]]; then
@@ -96,6 +108,12 @@ if [ $NUM_ARGUMENTS -gt 1 ]; then
 	done
 fi
 
+#echo "SEARCH_PATH: $SEARCH_PATH"
+#echo "CONVERTION_PATH: $CONVERTION_PATH"
+#echo "AB: $AB"
+#echo "REMOVE: $REMOVE"
+#echo "EXTENSION: $EXTENSION"
+
 # Check if $1 is a folder. 
 # Return 0 true and 1 otherwise.
 checkFolder () {
@@ -107,47 +125,52 @@ checkFolder () {
 	return 0;
 }
 
-# 1st move files from $1 to $2.
+# First of all, check if the extension to convert to mp3 is valid.
 
-if [ $NUM_ARGUMENTS -gt 2 ]; then
-	checkFolder $1
-	[ "$?" -eq 1 ] && exit 1;
-
-	if [ ! -e "$2" ]; then
-		echo "Creating folder $2";
-		mkdir -p $2;
-	fi
-
-	WORK_PATH=$2;
-
-	# Move files.
-	find "$1" -type f -name "*.$M4A" -print0 | xargs -0 -I "file" mv -v "file" "$2";
-
-elif [ $NUM_ARGUMENTS -eq 1 ]; then
-	checkFolder $1
-
-	[ "$?" -eq 1 ] && exit 1;
-
-	WORK_PATH=$1;
+if [ "$EXTENSION" != "ogg" -a "$EXTENSION" != "m4a" ]; then
+	echo "Wrong file extension, please expecify an availabe extension: m4a or ogg."
+	exit 1
 fi
 
-NUM_FIND_ELEMS=$(find $WORK_PATH -name *.m4a | wc -l);
+# Set the command to execute.
 
-echo "[*] Working path: $WORK_PATH"
-echo "[*] Elements to convert: $NUM_FIND_ELEMS"
+COMMAND=""
+if [ "$EXTENSION" == "m4a" ]; then
+	COMMAND='ffmpeg -i "$file" -ab "$AB"k "${file%$EXTENSION}mp3"'
+elif [ "$EXTENSION" == "ogg" ]; then
+	#COMMAND='ffmpeg -i "$file" -ab "$AB"k -map_metadata 0:s:0 -id3v2_version 3 -write_id3v1 1 -acodec libvorbis -aq 6 "${file%$EXTENSION}mp3"'
+	COMMAND='ffmpeg -i "$file" -ab "$AB"k -map_metadata 0:s:0 -id3v2_version 3 -write_id3v1 1 -acodec libmp3lame "${file%$EXTENSION}mp3"'
+fi
 
-if [ $NUM_FIND_ELEMS -eq 0 ]; then
+# Create the convertion folder if it doesn't exist.
+
+if [ ! -e "$CONVERTION_PATH" ]; then
+	echo "Creating folder $CONVERTION_PATH...";
+	mkdir -p $CONVERTION_PATH;
+fi
+
+# Move and convert counters.
+NUM_ELEMS_MOVED=$(find $SEARCH_PATH -type f -name "*.$EXTENSION" -print0 | xargs -0 -I "file" mv -v "file" $CONVERTION_PATH | wc -l)
+NUM_ELEMS_CONVERT=$(find $CONVERTION_PATH -type f -name "*.$EXTENSION" 2> /dev/null | wc -l)
+
+echo "[*] Search path: $SEARCH_PATH";
+echo "[*] Convertion path: $CONVERTION_PATH"
+echo "[*] Files moved: $NUM_ELEMS_MOVED"
+echo "[*] Files to convert: $NUM_ELEMS_CONVERT"
+
+if [ $NUM_ELEMS_CONVERT -eq 0 ]; then
 	echo "Nothing to do, no matches found."
 else	
-	cd $WORK_PATH
+	cd $CONVERTION_PATH
 
 	echo -e "[*] Converting files..."
 	
-	for file in *.m4a
-	do
-		ffmpeg -i "$file" -ab "$AB"k "${file%m4a}mp3";
+	for file in *.$EXTENSION
+	do		
+		eval $COMMAND
 
-		[ $REMOVE ] && rm "$file";
+		[ $REMOVE == true ] && rm -v "$file";
+		trap - INT TERM EXIT
 	done
 fi
 
