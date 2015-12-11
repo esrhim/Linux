@@ -1,19 +1,11 @@
-#!/bin/bash -x
+#!/bin/bash
 ################################################################################################################
 # Version: 1.0
 ################################################################################################################
 # Pablo Magro / Auckland / 28/11/2015.
-################################################################################################################
+#
 # Script to convert .m4a to .mp3
 #
-# 1. If one parameters is set, it means the target folder.
-# 2. if two parameters are set, it means source and target folders.
-#
-# Use: ./m4a2mp3.sh <-search-folder=> <-convertion-folder=> <-ab=320> <-rm=y/n> <-ext=m4a/ogg>
-#
-#      ./scritps/m4a2mp3.sh -search-folder=~/Downloads/ -convertion-folder=~/mp3-converted/ -ab=320 -rm=y
-#
-# Debug: add "-x" after bash in the 1st program line (without quotes).
 ################################################################################################################
 # Dependencies:
 # sudo apt-get install ffmpeg libavcodec-extra-53
@@ -49,6 +41,66 @@ AB=256
 REMOVE=false
 pkg=ffmpeg
 
+
+# READ command line parameters.
+
+self="$0"
+
+##DOC0
+## any comment line ##between DOC0 and ##DOC1 that starts '# ' 
+## will be printed in the help.
+
+if [ $NUM_ARGUMENTS -gt 0 ]; then	
+	arr=($@);
+
+	for i in ${arr[@]}; do
+		if [[ "$i" =~ "-ext" ]]; then
+			IFS='=' read -a argumentArray <<< "$i"
+			EXTENSION=${argumentArray[1]}
+
+		## Search directory
+		elif [[ "$i" =~ "-search-folder" ]]; then
+			IFS='=' read -a argumentArray <<< "$i"
+			if [[ -n ${argumentArray[1]} ]]; then
+				SEARCH_PATH=${argumentArray[1]}
+				SEARCH_PATH="${SEARCH_PATH/\~/$HOME}"
+			fi
+		## Convertion directory
+		elif [[ "$i" =~ "-convertion-folder" ]]; then
+			IFS='=' read -a argumentArray <<< "$i"
+			if [[ -n ${argumentArray[1]} ]]; then
+				CONVERTION_PATH=${argumentArray[1]}
+				CONVERTION_PATH="${CONVERTION_PATH/\~/$HOME}"
+			fi
+		## Bit rate
+		elif [[ "$i" =~ "-ab" ]]; then
+			IFS='=' read -a argumentArray <<< "$i"
+			if [[ -n ${argumentArray[1]} ]]; then
+				AB=${argumentArray[1]}
+			fi
+		## Remove the original files
+		elif [[ "$i" =~ "-rm" ]]; then
+			IFS='=' read -a argumentArray <<< "$i"
+			if [[ -n ${argumentArray[1]} ]]; then
+				rm=${argumentArray[1]}
+
+				if [[ "$rm" == "y" || "$rm" == "yes" ]]; then
+					REMOVE=true
+				fi
+			fi
+		elif [[ "$i" == "--help" || "$i" == "-h" ]]; then 
+			# 
+			#   Usage: m4a2mp3.sh <-search-folder=> <-convertion-folder=> <-ab=320> <-rm=y/n> <-ext=m4a/ogg>
+			# 
+			# Example: m4a2mp3.sh -search-folder=~/Downloads/ -convertion-folder=~/mp3-converted/ -ab=320 -rm=y -ext=m4a
+			sed '/^##DOC0$/,/^##DOC1$/ { s/^[ 	]*//; /)$/ d; /) \#/ { s/) \#/ / ; s/^/ / ; p ; d } ; /^# / { s/^# / / ; s/ \.// ; p;} } ; d' < "$self"
+			exit
+		fi
+	done
+fi
+# .
+##DOC1
+
 # Check if the ffmpeg program is installed.
 
 dpkg -s "$pkg" >/dev/null 2>&1 && {
@@ -62,57 +114,6 @@ dpkg -s "$pkg" >/dev/null 2>&1 && {
 	    esac
 	done    
 }
-
-# READ command line parameters.
-
-if [ $NUM_ARGUMENTS -gt 0 ]; then
-	# Also you can use a while + case "$1" in something) shift, and always use $1.
-	arr=($@);
-
-	for i in ${arr[@]}; do
-		if [[ "$i" =~ "-ext" ]]; then
-			IFS='=' read -a argumentArray <<< "$i"
-			EXTENSION=${argumentArray[1]}
-
-		# Search directory.
-		elif [[ "$i" =~ "-search-folder" ]]; then
-			IFS='=' read -a argumentArray <<< "$i"
-			if [[ -n ${argumentArray[1]} ]]; then
-				SEARCH_PATH=${argumentArray[1]}
-				SEARCH_PATH="${SEARCH_PATH/\~/$HOME}"
-			fi
-		# Convertion directory.
-		elif [[ "$i" =~ "-convertion-folder" ]]; then
-			IFS='=' read -a argumentArray <<< "$i"
-			if [[ -n ${argumentArray[1]} ]]; then
-				CONVERTION_PATH=${argumentArray[1]}
-				CONVERTION_PATH="${CONVERTION_PATH/\~/$HOME}"
-			fi
-		# Bit rate
-		elif [[ "$i" =~ "-ab" ]]; then
-			IFS='=' read -a argumentArray <<< "$i"
-			if [[ -n ${argumentArray[1]} ]]; then
-				AB=${argumentArray[1]}
-			fi
-		# Remove the original files.
-		elif [[ "$i" =~ "-rm" ]]; then
-			IFS='=' read -a argumentArray <<< "$i"
-			if [[ -n ${argumentArray[1]} ]]; then
-				rm=${argumentArray[1]}
-
-				if [[ "$rm" == "y" || "$rm" == "yes" ]]; then
-					REMOVE=true
-				fi
-			fi
-		fi
-	done
-fi
-
-#echo "SEARCH_PATH: $SEARCH_PATH"
-#echo "CONVERTION_PATH: $CONVERTION_PATH"
-#echo "AB: $AB"
-#echo "REMOVE: $REMOVE"
-#echo "EXTENSION: $EXTENSION"
 
 # Check if $1 is a folder. 
 # Return 0 true and 1 otherwise.
