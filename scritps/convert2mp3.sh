@@ -4,7 +4,10 @@
 ################################################################################################################
 # Pablo Magro / Auckland / 28/11/2015.
 #
-# Script to convert .m4a to .mp3
+# Script to convert .m4a, .ogg and .aif to .mp3
+#
+# TODO
+# for f in *.aif; do avconv -i "$f" -f mp3 -acodec libmp3lame -ab 320000 -ar 44100 "$f".mp3; done
 #
 ################################################################################################################
 # Dependencies:
