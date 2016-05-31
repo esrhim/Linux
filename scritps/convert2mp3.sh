@@ -1,6 +1,6 @@
 #!/bin/bash
 ################################################################################################################
-# Version: 1.0
+# Version: 1.0.1
 ################################################################################################################
 # Pablo Magro / Auckland / 28/11/2015.
 #
@@ -93,9 +93,9 @@ if [ $NUM_ARGUMENTS -gt 0 ]; then
 			fi
 		elif [[ "$i" == "--help" || "$i" == "-h" ]]; then 
 			# 
-			#   Usage: m4a2mp3.sh <-search-folder=> <-convertion-folder=> <-ab=320> <-rm=y/n> <-ext=m4a/ogg>
+			#   Usage: convert2mp3.sh <-search-folder=> <-convertion-folder=> <-ab=320> <-rm=y/n> <-ext=m4a/ogg>
 			# 
-			# Example: m4a2mp3.sh -search-folder=~/Downloads/ -convertion-folder=~/mp3-converted/ -ab=320 -rm=y -ext=m4a
+			# Example: ./convert2mp3.sh -search-folder=/home/user/Downloads/  convertion-folder=/home/user -ab=320 -rm=n -ext=m4a
 			sed '/^##DOC0$/,/^##DOC1$/ { s/^[ 	]*//; /)$/ d; /) \#/ { s/) \#/ / ; s/^/ / ; p ; d } ; /^# / { s/^# / / ; s/ \.// ; p;} } ; d' < "$self"
 			exit
 		fi
