@@ -1,14 +1,11 @@
 #!/bin/bash
+
 ################################################################################################################
-# Version: 1.0.1
+# Version: 1.0
 ################################################################################################################
 # Pablo Magro / Auckland / 28/11/2015.
 #
-# Script to convert .m4a, .ogg and .aif to .mp3
-#
-# TODO
-# for f in *.aif; do avconv -i "$f" -f mp3 -acodec libmp3lame -ab 320000 -ar 44100 "$f".mp3; done
-#
+# Script to convert .m4a, .ogg and .wma to .mp3
 ################################################################################################################
 # Dependencies:
 # sudo apt-get install ffmpeg libavcodec-extra-53
@@ -43,7 +40,6 @@ NUM_ARGUMENTS=$#
 AB=256
 REMOVE=false
 pkg=ffmpeg
-
 
 # READ command line parameters.
 
@@ -93,9 +89,9 @@ if [ $NUM_ARGUMENTS -gt 0 ]; then
 			fi
 		elif [[ "$i" == "--help" || "$i" == "-h" ]]; then 
 			# 
-			#   Usage: convert2mp3.sh <-search-folder=> <-convertion-folder=> <-ab=320> <-rm=y/n> <-ext=m4a/ogg>
+			#   Usage: m4a2mp3.sh <-search-folder=> <-convertion-folder=> <-ab=320> <-rm=y/n> <-ext=m4a/ogg>
 			# 
-			# Example: ./convert2mp3.sh -search-folder=/home/user/Downloads/  convertion-folder=/home/user -ab=320 -rm=n -ext=m4a
+			# Example: m4a2mp3.sh -search-folder=~/Downloads/ -convertion-folder=~/mp3-converted/ -ab=320 -rm=y -ext=m4a
 			sed '/^##DOC0$/,/^##DOC1$/ { s/^[ 	]*//; /)$/ d; /) \#/ { s/) \#/ / ; s/^/ / ; p ; d } ; /^# / { s/^# / / ; s/ \.// ; p;} } ; d' < "$self"
 			exit
 		fi
@@ -131,27 +127,29 @@ checkFolder () {
 
 # First of all, check if the extension to convert to mp3 is valid.
 
-if [ "$EXTENSION" != "ogg" -a "$EXTENSION" != "m4a" ]; then
-	echo "Wrong file extension, please expecify an availabe extension: m4a or ogg."
+if [ "$EXTENSION" != "ogg" -a "$EXTENSION" != "m4a" -a "$EXTENSION" != "wma" ]; then
+	echo "Wrong file extension, please expecify an availabe extension: m4a, wma or ogg."
 	exit 1
 fi
 
 # Set the command to execute.
 
 COMMAND=""
-if [ "$EXTENSION" == "m4a" ]; then
+if [ "$EXTENSION" == "m4a" -o "$EXTENSION" == "wma" ]; then
 	COMMAND='ffmpeg -i "$file" -ab "$AB"k "${file%$EXTENSION}mp3"'
 elif [ "$EXTENSION" == "ogg" ]; then
-	#COMMAND='ffmpeg -i "$file" -ab "$AB"k -map_metadata 0:s:0 -id3v2_version 3 -write_id3v1 1 -acodec libvorbis -aq 6 "${file%$EXTENSION}mp3"'
 	COMMAND='ffmpeg -i "$file" -ab "$AB"k -map_metadata 0:s:0 -id3v2_version 3 -write_id3v1 1 -acodec libmp3lame "${file%$EXTENSION}mp3"'
 fi
+
+# echo $COMMAND $EXTENSION $AB $file
 
 # Create the convertion folder if it doesn't exist.
 
 if [ ! -e "$CONVERTION_PATH" ]; then
 	echo "Creating folder $CONVERTION_PATH...";
 	mkdir -p $CONVERTION_PATH;
-fi
+fi;
+
 
 # Move and convert counters.
 NUM_ELEMS_MOVED=$(find $SEARCH_PATH -type f -name "*.$EXTENSION" -print0 | xargs -0 -I "file" mv -v "file" $CONVERTION_PATH | wc -l)
