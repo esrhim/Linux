@@ -82,7 +82,7 @@ sudo apt-get install -y mplayer smplayer vlc
 
 ## Others (Monitoring and networking) ##
 ```bash
-sudo apt install -y faketime htop lshw pdftk wget curl sudo filezilla
+sudo apt install -y faketime htop lshw pdftk wget curl filezilla
 ```
 
 ### Audit the system ###
