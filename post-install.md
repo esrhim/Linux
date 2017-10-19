@@ -30,6 +30,13 @@ And then run
   git config --global core.editor vim
 ```
 
+## PostgreSQL ##
+
+### Client Installation ###
+```bash
+sudo apt-get install -y postgresql-client
+```
+
 ## Install vscode ##
 
 ## Install compressing packages ##
