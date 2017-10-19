@@ -59,5 +59,38 @@ sudo apt-get install -y mplayer smplayer vlc
 sudo apt-get install -y faketime htop lshw pdftk wget curl
 ```
 
+### Audit the system ###
+[Lynis][Lynis]: an open source tool that performs a local security assessment and audits local services for vulnerabilities. It is light-weight and easy to use; just unzip it and run the command
+
+#### Import key ####
+```bash
+wget -O - http://packages.cisofy.com/keys/cisofy-software-public.key | apt-key add -
+```
+
+#### Add software repository ####
+Using your software in English? Then configure APT to skip downloading translations. This saves bandwidth and prevents additional load on the repository servers.
+
+```bash
+echo 'Acquire::Languages "none";' > /etc/apt/apt.conf.d/99disable-translations
+```
+
+Adding the repository:
+```bash
+echo "deb https://packages.cisofy.com/community/lynis/deb/ stretch main" > /etc/apt/sources.list.d/cisofy-lynis.list
+```
+
+Install Lynis
+```bash
+apt update && apt install -y lynis
+```
+
+Run report
+```bash
+lynis audit system
+```
+
+
+
 [screen]: https://www.gnu.org/software/screen/manual/screen.html
 [nodejs]: https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
+[Lynis]: https://cisofy.com/lynis/
