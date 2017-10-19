@@ -1,3 +1,5 @@
+It is a brief post intallation guide for Debian based systems.
+
 ### Add [multimedia][deb-multimedia] repos ###
 After you have added the necessary line in /etc/apt/sources.list (as below) 
 ```bash
@@ -32,7 +34,7 @@ curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 
-## Install git ##
+### Install git ###
 ```bash
 sudo apt-get install -y git
 ```
@@ -44,43 +46,43 @@ And then run
   git config --global core.editor vim
 ```
 
-## PostgreSQL ##
+### PostgreSQL ###
 
-### Client Installation ###
+#### Client Installation ####
 ```bash
 sudo apt-get install -y postgresql-client
 ```
 
-### Aministration ###
+#### Aministration ####
 pgAdmin III is a handy GUI for PostgreSQL, it is essential to beginners. To install it, type at the command line:
 ```bash
 sudo apt install -y pgadmin3
 ```
 
-## Install vscode ##
+### Install vscode ###
 
-## Install vim ##
+### Install vim ###
 ```bash
 sudo apt install -y vim
 ```
 And then edit the file */etc/vim/vimrc* to enable syntax highlighting.
 
-## Install compressing packages ##
+### Install compressing packages ###
 ```bash
 sudo apt-get install -y p7zip p7zip-full unrar-free unzip
 ```
 
-## Install extra fonts ##
+### Install extra fonts ###
 ```bash
 sudo apt-get install ttf-freefont ttf-mscorefonts-installer ttf-bitstream-vera ttf-dejavu ttf-liberation
 ```
 
-## Media ##
+### Media ###
 ```bash
 sudo apt-get install -y mplayer smplayer vlc
 ```
 
-## Others (Monitoring and networking) ##
+### Others (Monitoring and networking) ###
 ```bash
 sudo apt install -y faketime htop lshw pdftk wget curl filezilla
 ```
