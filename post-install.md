@@ -1,8 +1,8 @@
 
-## Install sudo and set permissions ## 
+### Install sudo and set permissions ###
 
 ```bash
-$ sudo apt install -y sudo
+# apt install -y sudo
 $ sudo adduser <user> sudo
 ```
 
