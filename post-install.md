@@ -59,6 +59,12 @@ sudo apt install -y pgadmin3
 
 ## Install vscode ##
 
+## Install vim ##
+```bash
+sudo apt install -y vim
+```
+And then edit the file */etc/vim/vimrc* to enable syntax highlighting.
+
 ## Install compressing packages ##
 ```bash
 sudo apt-get install -y p7zip p7zip-full unrar-free unzip
