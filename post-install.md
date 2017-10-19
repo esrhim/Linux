@@ -1,3 +1,17 @@
+### Add [multimedia][deb-multimedia] repos ###
+After you have added the necessary line in /etc/apt/sources.list (as below) 
+```bash
+deb ftp://ftp.deb-multimedia.org stable main non-free
+```
+the first package to install is deb-multimedia-keyring.
+```bash
+sudo apt update && apt install -y deb-multimedia-keyring
+```
+
+### Update the operating system ###
+```bash
+sudo apt-get update && time sudo apt-get dist-upgrade
+```
 
 ### Install sudo and set permissions ###
 
@@ -90,7 +104,8 @@ lynis audit system
 ```
 
 
-
+[deb-multimedia]: http://www.deb-multimedia.org/
 [screen]: https://www.gnu.org/software/screen/manual/screen.html
 [nodejs]: https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
 [Lynis]: https://cisofy.com/lynis/
+
