@@ -51,6 +51,12 @@ And then run
 sudo apt-get install -y postgresql-client
 ```
 
+### Aministration ###
+pgAdmin III is a handy GUI for PostgreSQL, it is essential to beginners. To install it, type at the command line:
+```bash
+sudo apt install -y pgadmin3
+```
+
 ## Install vscode ##
 
 ## Install compressing packages ##
