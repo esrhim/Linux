@@ -11,7 +11,7 @@ $ sudo adduser <user> sudo
 apt-get install -y screen
 ```
 
-## Install [nodejs][nodejs] ##
+### Install [nodejs][nodejs] ###
 For Node.js 8:
 ```bash
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
