@@ -74,17 +74,17 @@ Using your software in English? Then configure APT to skip downloading translati
 echo 'Acquire::Languages "none";' > /etc/apt/apt.conf.d/99disable-translations
 ```
 
-Adding the repository:
+#### Adding the repository: ####
 ```bash
 echo "deb https://packages.cisofy.com/community/lynis/deb/ stretch main" > /etc/apt/sources.list.d/cisofy-lynis.list
 ```
 
-Install Lynis
+#### Install Lynis ####
 ```bash
 apt update && apt install -y lynis
 ```
 
-Run report
+#### Run the report ####
 ```bash
 lynis audit system
 ```
