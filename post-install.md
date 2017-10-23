@@ -117,9 +117,23 @@ apt update && apt install -y lynis
 lynis audit system
 ```
 
+### KDE 5 ###
+
+#### Disable [baloo][baloo]-file-extractor  ####
+
+```bash
+balooctl status
+balooctl disable
+```
+
+Remove the local content:
+```bash
+rm -rfv ~/.local/share/baloo
+```
 
 [deb-multimedia]: http://www.deb-multimedia.org/
 [screen]: https://www.gnu.org/software/screen/manual/screen.html
 [nodejs]: https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions
 [Lynis]: https://cisofy.com/lynis/
+[baloo]: https://community.kde.org/Baloo/Configuration
 
