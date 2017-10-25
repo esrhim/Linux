@@ -94,6 +94,13 @@ sudo apt-get install ttf-freefont ttf-mscorefonts-installer ttf-bitstream-vera t
 sudo apt-get install -y mplayer smplayer vlc
 ```
 
+### shutter ###
+Feature-rich screenshot program
+```bash
+sudo apt install -y shutter
+```
+
+
 ### Others (Monitoring and networking) ###
 ```bash
 sudo apt install -y faketime htop lshw pdftk wget curl filezilla
